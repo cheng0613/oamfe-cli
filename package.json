@@ -1,0 +1,28 @@
+{
+  "name": "oamfe-cli",
+  "version": "1.0.0",
+  "description": "一个简单易用的前端脚手架工具",
+  "main": "cli.js",
+  "bin": {
+    "oamfe": "./cli.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node cli.js"
+  },
+  "keywords": [
+    "cli",
+    "scaffold",
+    "frontend",
+    "generator"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^11.1.0",
+    "fs-extra": "^11.3.2",
+    "inquirer": "^8.2.6",
+    "ora": "^5.4.1"
+  }
+}
