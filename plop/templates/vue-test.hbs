@@ -1,0 +1,9 @@
+import { mount } from '@vue/test-utils'; import
+{{pascalCase name}}
+from './{{pascalCase name}}.vue'; describe('{{pascalCase name}}', () => {
+it('renders component', () => { const wrapper = mount({{pascalCase name}});
+expect(wrapper.find('h1').text()).toBe('{{pascalCase name}}
+Component'); }); it('renders slot content', () => { const wrapper = mount({{pascalCase
+  name
+}}, { slots: { default: '<div>Test Content</div>' } });
+expect(wrapper.html()).toContain('<div>Test Content</div>'); }); });

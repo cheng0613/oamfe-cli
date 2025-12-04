@@ -1,0 +1,18 @@
+import
+{{pascalCase name}}
+from './{{pascalCase name}}.js'; import { JSDOM } from 'jsdom'; describe('{{pascalCase
+  name
+}}', () => { let dom; let container; beforeEach(() => { dom = new JSDOM('<div
+  id='test-container'
+></div>'); container = dom.window.document.querySelector('#test-container'); });
+afterEach(() => { dom.window.close(); }); it('renders component', () => { const
+component = new
+{{pascalCase name}}(container); const h1 = container.querySelector('h1');
+expect(h1.textContent).toBe('{{pascalCase name}}
+Component'); }); it('can set content', () => { const component = new
+{{pascalCase name}}(container); component.setContent('<p>Test Content</p>');
+const content = container.querySelector('.content');
+expect(content.innerHTML).toBe('<p>Test Content</p>'); }); it('can destroy
+component', () => { const component = new
+{{pascalCase name}}(container); component.destroy();
+expect(container.innerHTML).toBe(''); }); });

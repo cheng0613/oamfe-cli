@@ -12,7 +12,12 @@
     "commit": "git-cz",
     "prepare": "husky install",
     "lint": "eslint . --ext .js --fix",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "plop": "plop",
+    "generate": "node cli.js generate",
+    "component": "node cli.js component",
+    "hook": "node cli.js hook",
+    "template": "node cli.js template"
   },
   "keywords": [
     "cli",
@@ -41,7 +46,8 @@
     "commander": "^11.1.0",
     "fs-extra": "^11.3.2",
     "inquirer": "^8.2.6",
-    "ora": "^5.4.1"
+    "ora": "^5.4.1",
+    "plop": "^3.1.2"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.1.0",

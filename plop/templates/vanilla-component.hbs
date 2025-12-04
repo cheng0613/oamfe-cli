@@ -1,0 +1,23 @@
+{{#if hasStyles}}
+  import './{{pascalCase name}}.css';
+{{/if}}
+
+/** *
+{{pascalCase name}}
+Class
+{{#if description}}
+  *
+  {{description}}
+{{/if}}
+*/ class
+{{pascalCase name}}
+{ constructor(container) { this.container = container; this.render(); } render()
+{ this.container.innerHTML = `
+<div class='{{kebabName name}}-container'>
+  <h1>{{pascalCase name}} Component</h1>
+  <div class='content'></div>
+</div>
+`; } setContent(content) { const contentEl =
+this.container.querySelector('.content'); if (contentEl) { contentEl.innerHTML =
+content; } } destroy() { this.container.innerHTML = ''; } } export default
+{{pascalCase name}};
