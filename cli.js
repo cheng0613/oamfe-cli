@@ -7,8 +7,6 @@ const fs = require('fs-extra');
 const path = require('path');
 const ora = require('ora');
 
-
-
 const program = new Command();
 
 program
@@ -19,7 +17,7 @@ program
 program
   .command('create <project-name>')
   .description('创建新的前端项目')
-  .action(async (projectName) => {
+  .action(async projectName => {
     try {
       const answers = await inquirer.prompt([
         {
@@ -53,24 +51,23 @@ program
       ]);
 
       const targetDir = path.resolve(process.cwd(), projectName);
-      
+
       if (await fs.pathExists(targetDir)) {
         console.log(chalk.red(`目标目录 ${projectName} 已存在！`));
         return;
       }
 
       const spinner = ora('正在创建项目...').start();
-      
+
       await createProject(targetDir, projectName, answers.template, answers);
-      
+
       spinner.succeed('项目创建成功！');
-      
+
       console.log(chalk.green('\n✅ 项目创建完成！'));
       console.log(chalk.blue('\n📝 接下来的步骤：'));
       console.log(`   cd ${projectName}`);
       console.log(`   ${answers.useNpm ? 'npm install' : 'yarn install'}`);
       console.log(`   ${answers.useNpm ? 'npm run dev' : 'yarn dev'}`);
-      
     } catch (error) {
       console.error(chalk.red('创建项目失败：'), error.message);
     }
@@ -88,10 +85,10 @@ program
 
 async function createProject(targetDir, projectName, template, options) {
   const templateDir = path.join(__dirname, 'templates', template);
-  
+
   await fs.ensureDir(targetDir);
   await fs.copy(templateDir, targetDir);
-  
+
   const packageJsonPath = path.join(targetDir, 'package.json');
   if (await fs.pathExists(packageJsonPath)) {
     const packageJson = await fs.readJson(packageJsonPath);
@@ -102,7 +99,7 @@ async function createProject(targetDir, projectName, template, options) {
     }
     await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
   }
-  
+
   const readmePath = path.join(targetDir, 'README.md');
   if (await fs.pathExists(readmePath)) {
     let readme = await fs.readFile(readmePath, 'utf8');
