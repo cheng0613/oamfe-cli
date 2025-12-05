@@ -1,9 +1,41 @@
-import { ref, computed, onMounted, onUnmounted } from 'vue'; export interface
-Use{{pascalCase name}}Return { // 定义返回值类型 } /** *
-{{camelCase name}}
-composable * 自定义组合式函数功能描述 */ export const use{{pascalCase name}}
-= (): Use{{pascalCase name}}Return => { const state = ref(null); // 计算属性
-const computedValue = computed(() => { return state.value; }); // 方法 const
-functionName = () => { // 你的逻辑 }; onMounted(() => { // 挂载时逻辑 });
-onUnmounted(() => { // 卸载时清理逻辑 }); return { // 返回值 }; }; export
-default use{{pascalCase name}};
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+
+export interface Use{{pascalCase name}}Return {
+  // 定义返回值类型
+  value: any;
+  // 添加其他返回属性
+}
+
+/**
+ * {{camelCase name}} composable
+ * 自定义组合式函数功能描述
+ */
+export const use{{pascalCase name}} = (): Use{{pascalCase name}}Return => {
+  const state = ref(null);
+  
+  // 计算属性
+  const computedValue = computed(() => {
+    return state.value;
+  });
+  
+  // 方法
+  const functionName = () => {
+    // 你的逻辑
+  };
+  
+  onMounted(() => {
+    // 挂载时逻辑
+  });
+  
+  onUnmounted(() => {
+    // 卸载时清理逻辑
+  });
+  
+  return {
+    value: computedValue,
+    functionName
+    // 返回值
+  };
+};
+
+export default use{{pascalCase name}};

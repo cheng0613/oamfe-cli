@@ -1,4 +1,9 @@
 module.exports = function (plop) {
+  const path = require('path');
+
+  // 获取CLI工具目录
+  const cliDir = __dirname;
+
   // 添加自定义helper
   plop.addHelper('upperCase', text => text.toUpperCase());
   plop.addHelper('lowerCase', text => text.toLowerCase());
@@ -111,14 +116,14 @@ module.exports = function (plop) {
         actions.push({
           type: 'add',
           path: `${basePath}/{{kebabName name}}/{{pascalCase name}}.tsx`,
-          templateFile: 'plop/templates/react-component.hbs'
+          templateFile: path.join(cliDir, 'plop/templates/react-component.hbs')
         });
 
         if (data.hasStyles) {
           actions.push({
             type: 'add',
             path: `${basePath}/{{kebabName name}}/{{pascalCase name}}.module.css`,
-            templateFile: 'plop/templates/react-styles.hbs'
+            templateFile: path.join(cliDir, 'plop/templates/react-styles.hbs')
           });
         }
 
@@ -126,28 +131,28 @@ module.exports = function (plop) {
           actions.push({
             type: 'add',
             path: `${basePath}/{{kebabName name}}/{{pascalCase name}}.test.tsx`,
-            templateFile: 'plop/templates/react-test.hbs'
+            templateFile: path.join(cliDir, 'plop/templates/react-test.hbs')
           });
         }
 
         actions.push({
           type: 'add',
           path: `${basePath}/{{kebabName name}}/index.ts`,
-          templateFile: 'plop/templates/react-index.hbs'
+          templateFile: path.join(cliDir, 'plop/templates/react-index.hbs')
         });
       } else if (componentType === 'vue') {
         // Vue 组件模板
         actions.push({
           type: 'add',
           path: `${basePath}/{{kebabName name}}/{{pascalCase name}}.vue`,
-          templateFile: 'plop/templates/vue-component.hbs'
+          templateFile: path.join(cliDir, 'plop/templates/vue-component.hbs')
         });
 
         if (data.hasStyles) {
           actions.push({
             type: 'add',
             path: `${basePath}/{{kebabName name}}/{{pascalCase name}}.css`,
-            templateFile: 'plop/templates/vue-styles.hbs'
+            templateFile: path.join(cliDir, 'plop/templates/vue-styles.hbs')
           });
         }
 
@@ -155,7 +160,7 @@ module.exports = function (plop) {
           actions.push({
             type: 'add',
             path: `${basePath}/{{kebabName name}}/{{pascalCase name}}.spec.js`,
-            templateFile: 'plop/templates/vue-test.hbs'
+            templateFile: path.join(cliDir, 'plop/templates/vue-test.hbs')
           });
         }
       } else if (componentType === 'vanilla') {
@@ -163,14 +168,17 @@ module.exports = function (plop) {
         actions.push({
           type: 'add',
           path: `${basePath}/{{kebabName name}}/{{pascalCase name}}.js`,
-          templateFile: 'plop/templates/vanilla-component.hbs'
+          templateFile: path.join(
+            cliDir,
+            'plop/templates/vanilla-component.hbs'
+          )
         });
 
         if (data.hasStyles) {
           actions.push({
             type: 'add',
             path: `${basePath}/{{kebabName name}}/{{pascalCase name}}.css`,
-            templateFile: 'plop/templates/vanilla-styles.hbs'
+            templateFile: path.join(cliDir, 'plop/templates/vanilla-styles.hbs')
           });
         }
 
@@ -178,61 +186,13 @@ module.exports = function (plop) {
           actions.push({
             type: 'add',
             path: `${basePath}/{{kebabName name}}/{{pascalCase name}}.test.js`,
-            templateFile: 'plop/templates/vanilla-test.hbs'
+            templateFile: path.join(cliDir, 'plop/templates/vanilla-test.hbs')
           });
         }
       }
 
       return actions;
     }
-  });
-
-  plop.setGenerator('template', {
-    description: '创建项目模板',
-    prompts: [
-      {
-        type: 'input',
-        name: 'name',
-        message: '请输入模板名称：',
-        validate: function (value) {
-          if (/.+/.test(value)) {
-            return true;
-          }
-          return '模板名称是必填的';
-        }
-      },
-      {
-        type: 'input',
-        name: 'description',
-        message: '请输入模板描述：',
-        default: ''
-      },
-      {
-        type: 'checkbox',
-        name: 'features',
-        message: '请选择模板特性：',
-        choices: [
-          { name: 'TypeScript 支持', value: 'typescript' },
-          { name: 'CSS 预处理器', value: 'css-preprocessor' },
-          { name: '状态管理', value: 'state-management' },
-          { name: '路由', value: 'routing' },
-          { name: '测试框架', value: 'testing' },
-          { name: '打包工具', value: 'bundler' }
-        ]
-      }
-    ],
-    actions: [
-      {
-        type: 'add',
-        path: 'templates/{{name}}/package.json',
-        templateFile: 'plop/templates/template-package.hbs'
-      },
-      {
-        type: 'add',
-        path: 'templates/{{name}}/README.md',
-        templateFile: 'plop/templates/template-readme.hbs'
-      }
-    ]
   });
 
   plop.setGenerator('hook', {
@@ -267,19 +227,19 @@ module.exports = function (plop) {
         actions.push({
           type: 'add',
           path: 'src/hooks/{{name}}.ts',
-          templateFile: 'plop/templates/react-hook.hbs'
+          templateFile: path.join(cliDir, 'plop/templates/react-hook.hbs')
         });
       } else if (data.type === 'vue') {
         actions.push({
           type: 'add',
           path: 'src/composables/{{name}}.ts',
-          templateFile: 'plop/templates/vue-composable.hbs'
+          templateFile: path.join(cliDir, 'plop/templates/vue-composable.hbs')
         });
       } else if (data.type === 'utility') {
         actions.push({
           type: 'add',
           path: 'src/utils/{{name}}.ts',
-          templateFile: 'plop/templates/utility-function.hbs'
+          templateFile: path.join(cliDir, 'plop/templates/utility-function.hbs')
         });
       }
 

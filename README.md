@@ -1,10 +1,10 @@
 # oamfe CLI
 
-一个功能强大的前端脚手架工具，帮助你快速创建现代化的前端项目，并集成代码生成、Git hooks等开发工具。
+一个功能强大的前端脚手架工具，帮助你快速创建前端项目，并集成代码生成、Git hooks等开发工具。
 
 ## ✨ 特性
 
-- 🚀 **快速项目创建** - 支持 React、Vue、原生 JavaScript 模板
+- 🚀 **GitLab 模板克隆** - 从 GitLab 仓库快速克隆项目模板
 - 🎯 **智能组件生成** - 支持 React、Vue、原生 JS 组件生成
 - 🔧 **Git 工作流** - 集成 husky、commitlint、cz-git 标准化提交
 - 📝 **代码质量** - 内置 ESLint、Prettier、lint-staged
@@ -35,7 +35,16 @@ npm link
 oamfe create <project-name>
 ```
 
-### 查看可用模板
+支持以下项目模板：
+
+#### 🏢 ruoyi-vue3 - 企业级后台管理系统
+
+- 从 GitLab 仓库克隆企业级项目模板
+- 完整的后台管理系统架构
+- Vue 3 + TypeScript + Element Plus
+- 仓库地址：`ssh://git@gitlab.juneyaoair.com:10022/yidongyunxing/ruoyi-vue3.git`
+
+### 查看可用信息
 
 ```bash
 oamfe list
@@ -69,29 +78,25 @@ oamfe generate
 oamfe --help
 ```
 
-## 📋 支持的模板
+## 📋 项目模板
 
-### React + TypeScript
+### RuoYi-Vue3
 
-- ⚛️ React 18
-- 📦 TypeScript 支持
-- ⚡️ Vite 构建
-- 🎨 ESLint + Prettier 代码规范
-- 🔧 Git hooks 集成
+- 🏢 **来源**：GitLab 企业级项目模板
+- 🖖 **技术栈**：Vue 3 + TypeScript + Vite
+- 📦 **特性**：
+  - 企业级前端框架
+  - 完整的后台管理系统模板
+  - TypeScript 支持
+  - 现代化构建工具
+  - 权限管理系统
+  - 丰富的组件库
 
-### Vue 3 + TypeScript
+📋 **GitLab 仓库**：
 
-- 🖖 Vue 3 + Composition API
-- 📦 TypeScript 支持
-- ⚡️ Vite 构建
-- 🎨 ESLint + Prettier 代码规范
-- 🔧 Git hooks 集成
-
-### 原生 JavaScript
-
-- 📦 Vanilla JavaScript
-- ⚡️ Vite 构建
-- 🎨 现代化开发体验
+```
+ssh://git@gitlab.juneyaoair.com:10022/yidongyunxing/ruoyi-vue3.git
+```
 
 ## 🎯 组件生成
 
@@ -138,14 +143,8 @@ npx git-cz
 ### 创建新项目
 
 ```bash
-# 创建 React 项目
-oamfe create my-react-app
-
-# 创建 Vue 项目
-oamfe create my-vue-app
-
-# 创建原生 JavaScript 项目
-oamfe create my-vanilla-app
+# 创建企业级后台管理系统项目
+oamfe create my-admin-app
 ```
 
 ### 生成组件

@@ -15,19 +15,28 @@ program
   .version('1.0.0');
 
 program
-  .command('create <project-name>')
+  .command('create')
   .description('创建新的前端项目')
-  .action(async projectName => {
+  .action(async () => {
     try {
       const answers = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'projectName',
+          message: '请输入项目名称：',
+          validate: function (value) {
+            if (/.+/.test(value)) {
+              return true;
+            }
+            return '项目名称是必填的';
+          }
+        },
         {
           type: 'list',
           name: 'template',
           message: '请选择项目模板：',
           choices: [
-            { name: 'React + TypeScript', value: 'react' },
-            { name: 'Vue 3 + TypeScript', value: 'vue' },
-            { name: '原生 JavaScript', value: 'vanilla' }
+            { name: 'ruoyi-vue3 - 企业级后台管理系统', value: 'ruoyi-vue3' }
           ]
         },
         {
@@ -50,6 +59,7 @@ program
         }
       ]);
 
+      const projectName = answers.projectName;
       const targetDir = path.resolve(process.cwd(), projectName);
 
       if (await fs.pathExists(targetDir)) {
@@ -57,10 +67,8 @@ program
         return;
       }
 
-      const spinner = ora('正在创建项目...').start();
-
-      await createProject(targetDir, projectName, answers.template, answers);
-
+      const spinner = ora('正在从 GitLab 克隆 ruoyi-vue3 模板...').start();
+      await createProjectFromGitLab(targetDir, projectName, answers);
       spinner.succeed('项目创建成功！');
 
       console.log(chalk.green('\n✅ 项目创建完成！'));
@@ -75,38 +83,96 @@ program
 
 program
   .command('list')
-  .description('列出所有可用模板')
+  .description('列出可用信息')
   .action(async () => {
     const { default: chalk } = await import('chalk');
-    console.log(chalk.blue('📋 可用模板列表：'));
-    console.log('  • React + TypeScript - 现代化的 React 开发框架');
-    console.log('  • Vue 3 + TypeScript - 渐进式 JavaScript 框架');
-    console.log('  • 原生 JavaScript - 简单的 HTML/CSS/JS 项目');
+    console.log(chalk.blue('📋 oamfe CLI 信息：'));
+    console.log('  • create - 创建新项目（支持多种模板）');
+    console.log('  • component - 生成 React、Vue 或原生 JS 组件');
+    console.log('  • generate - 使用 plop 生成器');
+    console.log('');
+    console.log(chalk.yellow('📦 支持的模板：'));
+    console.log('  🏢 ruoyi-vue3 - 企业级后台管理系统');
+    console.log(
+      '    GitLab: ssh://git@gitlab.juneyaoair.com:10022/yidongyunxing/ruoyi-vue3.git'
+    );
   });
 
-async function createProject(targetDir, projectName, template, options) {
-  const templateDir = path.join(__dirname, 'templates', template);
+async function createProjectFromGitLab(targetDir, projectName, options) {
+  const { spawn } = require('child_process');
+  const tempDir = path.join(require('os').tmpdir(), `ruoyi-vue3-${Date.now()}`);
 
-  await fs.ensureDir(targetDir);
-  await fs.copy(templateDir, targetDir);
+  try {
+    // 克隆 GitLab 仓库到临时目录
+    console.log(chalk.blue('🔄 正在克隆 GitLab 仓库...'));
+    await new Promise((resolve, reject) => {
+      const gitClone = spawn('git', [
+        'clone',
+        '--depth',
+        '1',
+        'ssh://git@gitlab.juneyaoair.com:10022/yidongyunxing/ruoyi-vue3.git',
+        tempDir
+      ]);
 
-  const packageJsonPath = path.join(targetDir, 'package.json');
-  if (await fs.pathExists(packageJsonPath)) {
-    const packageJson = await fs.readJson(packageJsonPath);
-    packageJson.name = projectName;
-    packageJson.description = options.description;
-    if (options.author) {
-      packageJson.author = options.author;
+      gitClone.stdout.on('data', data => {
+        console.log(data.toString());
+      });
+
+      gitClone.stderr.on('data', data => {
+        console.error(data.toString());
+      });
+
+      gitClone.on('close', code => {
+        if (code === 0) {
+          console.log(chalk.green('✅ Git 仓库克隆成功'));
+          resolve();
+        } else {
+          reject(new Error(`Git clone failed with code ${code}`));
+        }
+      });
+
+      gitClone.on('error', reject);
+    });
+
+    // 复制模板文件到目标目录
+    await fs.ensureDir(targetDir);
+    await fs.copy(tempDir, targetDir);
+
+    // 清理临时目录
+    await fs.remove(tempDir);
+
+    // 更新 package.json
+    const packageJsonPath = path.join(targetDir, 'package.json');
+    if (await fs.pathExists(packageJsonPath)) {
+      const packageJson = await fs.readJson(packageJsonPath);
+      packageJson.name = projectName;
+      packageJson.description = options.description;
+      if (options.author) {
+        packageJson.author = options.author;
+      }
+      await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
     }
-    await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
-  }
 
-  const readmePath = path.join(targetDir, 'README.md');
-  if (await fs.pathExists(readmePath)) {
-    let readme = await fs.readFile(readmePath, 'utf8');
-    readme = readme.replace(/{{projectName}}/g, projectName);
-    readme = readme.replace(/{{description}}/g, options.description);
-    await fs.writeFile(readmePath, readme);
+    // 更新 README.md
+    const readmePath = path.join(targetDir, 'README.md');
+    if (await fs.pathExists(readmePath)) {
+      let readme = await fs.readFile(readmePath, 'utf8');
+      readme = readme.replace(/{{projectName}}/g, projectName);
+      readme = readme.replace(/{{description}}/g, options.description);
+      await fs.writeFile(readmePath, readme);
+    }
+
+    // 删除 .git 目录以创建新的仓库
+    const gitDir = path.join(targetDir, '.git');
+    if (await fs.pathExists(gitDir)) {
+      await fs.remove(gitDir);
+    }
+  } catch (error) {
+    // 清理临时目录
+    if (await fs.pathExists(tempDir)) {
+      await fs.remove(tempDir);
+    }
+    throw error;
   }
 }
 
@@ -416,13 +482,68 @@ program
   .command('generate')
   .alias('g')
   .description('使用 plop 生成器创建组件、hook等')
-  .action(() => {
+  .action(async () => {
     try {
+      const currentDir = process.cwd();
+      let targetDir = currentDir;
+
+      // 检查是否在 CLI 工具目录中
+      if (currentDir === __dirname || currentDir === path.dirname(__dirname)) {
+        console.log(chalk.red('❌ 不能在 CLI 工具目录中生成组件！'));
+        console.log(chalk.yellow('💡 请先在您的项目目录中运行此命令：'));
+        console.log(chalk.cyan('   cd your-project-directory'));
+        console.log(chalk.cyan('   oamfe g'));
+
+        // 提供一个选项让用户输入目标目录
+        const { useCustomDir } = await inquirer.prompt([
+          {
+            type: 'confirm',
+            name: 'useCustomDir',
+            message: '是否要指定目标项目目录？',
+            default: true
+          }
+        ]);
+
+        if (useCustomDir) {
+          const { targetDir: userDir } = await inquirer.prompt([
+            {
+              type: 'input',
+              name: 'targetDir',
+              message: '请输入目标项目目录的绝对路径：',
+              validate: function (value) {
+                if (!/.+/.test(value)) {
+                  return '目标目录路径是必填的';
+                }
+                if (!fs.existsSync(value)) {
+                  return '目标目录不存在';
+                }
+                return true;
+              }
+            }
+          ]);
+          targetDir = userDir;
+        } else {
+          return;
+        }
+      }
+
+      console.log(chalk.blue(`🔄 在 ${targetDir} 目录中执行生成器...`));
+
       const { spawn } = require('child_process');
-      const child = spawn('npx', ['plop'], {
-        cwd: __dirname,
-        stdio: 'inherit'
-      });
+      const child = spawn(
+        'npx',
+        [
+          'plop',
+          '--plopfile',
+          path.join(__dirname, 'plopfile.js'),
+          '--dest',
+          targetDir
+        ],
+        {
+          cwd: targetDir,
+          stdio: 'inherit'
+        }
+      );
 
       child.on('close', code => {
         if (code !== 0) {

@@ -5,16 +5,18 @@
   </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
   {{#if hasStyles}}
     import './{{pascalCase name}}.css';
   {{/if}}
 
   interface Props {
   {{#if description}}
-    /** *
-    {{description}}
-    */
+    /**
+     * {{description}}
+     */
   {{/if}}
-  } defineProps<Props>();
+  }
+
+  defineProps<Props>();
 </script>
