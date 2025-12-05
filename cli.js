@@ -569,3 +569,4 @@ if (!process.argv.slice(2).length) {
 
 program.parse();
 // Testing cz config again
+// Testing git-cz with config flag
